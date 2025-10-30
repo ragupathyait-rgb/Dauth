@@ -34,14 +34,14 @@ export default function Login() {
       
       const wallet = await getWallet();
       
-      if (wallet) {
+      if (wallet?.accountAddress) {
         console.log("Wallet found, getting contract...");
         const contract = getUserContract();
         console.log("Contract:", contract);
         
         try {
           console.log("Calling getUserDetailsForWallet with wallet:", wallet);
-          const getUserDetailsForWallet = await contract.methods.getUserDetailsForWallet(wallet).call();
+          const getUserDetailsForWallet = await contract.methods.getUserDetailsForWallet(wallet?.accountAddress).call();
           console.log("getUserDetailsForWallet >>>>>>>>>>", getUserDetailsForWallet);
                     
           const accounts = getUserDetailsForWallet.map((user, index) => ({
@@ -102,12 +102,15 @@ export default function Login() {
       }
 
       setStatus("Verifying...");
+      console.log("walletAccountDetails >>>>>>>>>>", wallet?.publicKey);
+      console.log("wallet?.publicKey >>>>>>>>>>", wallet);
       const { code } = await verifyWalletSignature({
-        walletAddress: wallet,
+        walletAddress: wallet?.accountAddress,
+        publicKey: wallet?.publicKey,
         signature,
         client_id,
         redirect_uri,
-        state
+        state,
       });
 
       setStatus("Redirecting...");

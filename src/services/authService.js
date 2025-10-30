@@ -65,9 +65,9 @@ export async function requestWalletChallenge({ client_id, redirect_uri, state, c
   return res.data; // { challenge }
 }
 
-export async function verifyWalletSignature({ walletAddress, signature, client_id, redirect_uri, state }) {
+export async function verifyWalletSignature({ walletAddress, publicKey, signature, client_id, redirect_uri, state }) {
   const res = await axios.post(`${API_URL}/wallet/verify`, {
-    walletAddress, signature, client_id, redirect_uri, state
+    walletAddress, publicKey, signature, client_id, redirect_uri, state
   });
   return res.data; // { code, redirect_uri, state }
 }
@@ -94,10 +94,10 @@ export async function getWallet() {
   }
   console.log("Getting wallet...");
   const account = await window.ncogProvider.request({ method: 'ncog_accounts' });
-  if (!account?.selectedAccount?.accountAddress) {
+  if (!account?.selectedAccount) {
     return null;
   }
-  return account.selectedAccount.accountAddress;
+  return account.selectedAccount;
 }
 
 export const getUserContract = () => {
